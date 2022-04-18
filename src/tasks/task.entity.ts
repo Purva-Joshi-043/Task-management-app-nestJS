@@ -17,7 +17,7 @@ export class Task{
     @Column()
     status:Taskstatus;
 
-    @ManyToOne(type => User,user=> user.tasks,{eager:false})
+    @ManyToOne(type => User,user=> user.tasks,{eager:false}) // NOTE: use spaces and format the document
     @Exclude({toPlainOnly:true})
     user:User;
 

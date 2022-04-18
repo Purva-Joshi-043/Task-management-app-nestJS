@@ -13,3 +13,4 @@ export class TransformInterceptor implements NestInterceptor {
     return next.handle().pipe(map((data) => classToPlain(data)));
   }
 }
+// NOTE: Use only when required, it doesn't make sense if you execute this for every response, it will take that extra 30ms - 50ms for nothing

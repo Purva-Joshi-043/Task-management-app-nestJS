@@ -23,12 +23,14 @@ import { Logger } from '@nestjs/common';
 @Controller('tasks')
 @UseGuards(AuthGuard())
 export class TasksController {
-  private logger = new Logger('TasksController');
+  private logger = new Logger('TasksController'); // NOTE: make readonly
+  // NOTE: use of logger inside service file, logger inside controller is prohibited 
+  // NOTE: all contexts should be UPPERCASE
   constructor(
-    private tasksService: TasksService,
+    private tasksService: TasksService, // NOTE: make readonly
    
   ) {
-    
+    // NOTE: remove new line when not required
   }
 
   @Get()
@@ -39,14 +41,15 @@ export class TasksController {
     this.logger.verbose(
       `User "${user.username}" retrieving all tasks.Filters: ${JSON.stringify(
         filterDto,
-      )}`,
+      )}`, // NOTE: use .log() method, verbose has another use
     );
-    return this.tasksService.getTasks(filterDto, user);
+    return this.tasksService.getTasks(filterDto, user); // NOTE: use await
   }
 
   @Get('/:id')
+    // NOTE: use ParseUUIDPipe
   getTaskById(@Param('id') id: string, @GetUser() user: User): Promise<Task> {
-    return this.tasksService.getTaskById(id, user);
+    return this.tasksService.getTaskById(id, user);// NOTE: use await
   }
 
   @Post()
@@ -59,7 +62,7 @@ export class TasksController {
         createTaskDto,
       )}`,
     );
-    return this.tasksService.createTask(createTaskDto, user);
+    return this.tasksService.createTask(createTaskDto, user); // NOTE: use await
   }
 
   @Patch('/:id/status')
