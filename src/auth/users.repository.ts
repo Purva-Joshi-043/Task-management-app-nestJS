@@ -7,6 +7,8 @@ import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { User } from './user.entity';
 import * as bcrypt from 'bcrypt';
 
+// NOTE: create a repository directory and put this inside the directory
+
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
   async createUser(authCredentialsDto: AuthCredentialsDto): Promise<void> {
@@ -17,15 +19,15 @@ export class UserRepository extends Repository<User> {
 
     const user = this.create({ username, password: hashedPassword });
     try {
-      await this.save(user);
+      await this.save(user); // NOTE: must return a value / message
     } catch (error) {
-      if (error.code === '23505') {
+      if (error.code === '23505') { // NOTE: For single line conditionals, remove the {}
         //duplicate username
         throw new ConflictException('Username already eists');
       } else {
         throw new InternalServerErrorException();
       }
-      console.log(error.code);
+      console.log(error.code); // NOTE: unreachable code, remove them
     }
   }
 }

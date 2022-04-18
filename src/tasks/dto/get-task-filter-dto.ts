@@ -8,5 +8,6 @@ export class GetTaskFilterDto {
 
   @IsOptional()
   @IsNotEmpty()
+    // NOTE: use IsString()
   search?: string;
 }

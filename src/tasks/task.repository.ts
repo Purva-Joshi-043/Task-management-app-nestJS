@@ -8,10 +8,13 @@ import { InternalServerErrorException, Logger } from '@nestjs/common';
 
 @EntityRepository(Task)
 export class TasksRepository extends Repository<Task> {
-  private logger = new Logger('TasksRepository');
+  private logger = new Logger('TasksRepository'); // NOTE: make readonly
+  // NOTE: context has to be UPPERCASE
+  // NOTE: can not use logger inside repository
 
   async getTasks(filterDto: GetTaskFilterDto, user: User): Promise<Task[]> {
     const { status, search } = filterDto;
+    // NOTE: Build this query using find(), without the use of queryBuilder()
     const query = this.createQueryBuilder('task');
     query.where({ user });
     if (status) {
@@ -45,7 +48,7 @@ export class TasksRepository extends Repository<Task> {
       description,
       status: Taskstatus.OPEN,
       user,
-    });
+    }); // NOTE: can use spread operator for destructuring
     await this.save(task);
     return task;
   }

@@ -19,7 +19,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get('JWT_SECRET'),
         signOptions: {
-          expiresIn: 3600,
+          expiresIn: 3600, // NOTE: Can use 1h/1d/10d/1y no need to convert it to secs
         },
       }),
     }),
@@ -27,6 +27,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   ],
   providers: [AuthService, JwtStrategy],
   controllers: [AuthController],
-  exports: [JwtStrategy, PassportModule],
+  exports: [JwtStrategy, PassportModule], // NOTE: Export the strategy, not the module
 })
 export class AuthModule {}
