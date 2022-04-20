@@ -12,6 +12,9 @@ export class User {
   @Column()
   password: string;
 
-  @OneToMany((type) => Task, (task) => task.user, { eager: true }) // NOTE: make nullable to true
+  @OneToMany((type) => Task, (task) => task.user, {
+    eager: true,
+    nullable: true,
+  }) 
   tasks: Task[];
 }

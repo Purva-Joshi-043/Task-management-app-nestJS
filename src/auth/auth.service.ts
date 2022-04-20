@@ -1,33 +1,35 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
-import { UserRepository } from './users.repository';
+import { UserRepository } from './repository/users.repository';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { JwtPayload } from './jwt-payload.interface';
+import { JwtPayload } from './strategy/jwt-payload.interface';
+import { User } from './user.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(UserRepository) // NOTE: Do not use InjectRepository if you already have a custom repository
-    private usersRepository: UserRepository,
-    private jwtService: JwtService, // NOTE: make readonly
+
+    private readonly usersRepository: UserRepository,
+    private readonly jwtService: JwtService, 
   ) {}
 
-  async signup(authCredentialsDto: AuthCredentialsDto): Promise<void> {
-    return this.usersRepository.createUser(authCredentialsDto); // NOTE: use await
+  async signup(authCredentialsDto: AuthCredentialsDto): Promise<User>
+   {
+    return await this.usersRepository.createUser(authCredentialsDto); 
   }
 
   async signIn(
     authCredentialsDto: AuthCredentialsDto,
-  ): Promise<{ accessToken: string }> {
+  ): Promise<{ accessToken: string,user:User }> {
     const { username, password } = authCredentialsDto;
     const user = await this.usersRepository.findOne({ username });
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      const payload: JwtPayload = { username }; // NOTE: use id instead of username
-      const accessToken: string = await this.jwtService.sign(payload); // NOTE: do not use await when not required, I believe sign() is sync method, if not, ignore this note
-      return { accessToken }; // NOTE: also return the user object
+      const payload: JwtPayload = { id:user.id }; 
+      const accessToken: string =  this.jwtService.sign(payload); 
+      return {accessToken,user}; 
     } else {
       throw new UnauthorizedException('Please check your login credentials');
     }

@@ -10,12 +10,12 @@ import { User } from 'src/auth/user.entity';
 @Injectable()
 export class TasksService {
   constructor(
-    @InjectRepository(TasksRepository)// NOTE: InjectRepository not required
-    private tasksRepository: TasksRepository,// NOTE: make readonly
+    @InjectRepository(TasksRepository) // NOTE: InjectRepository not required
+    private readonly tasksRepository: TasksRepository, 
   ) {}
 
-  getTasks(filterDto: GetTaskFilterDto, user: User): Promise<Task[]> {
-    return this.tasksRepository.getTasks(filterDto, user); // NOTE: use await
+  async getTasks(filterDto: GetTaskFilterDto, user: User): Promise<Task[]> {
+    return await this.tasksRepository.getTasks(filterDto, user);
   }
 
   async getTaskById(id: string, user: User): Promise<Task> {
@@ -26,8 +26,8 @@ export class TasksService {
     return found;
   }
 
-  createTask(createTaskDto: CreateTaskDto, user: User): Promise<Task> {
-    return this.tasksRepository.createTask(createTaskDto, user); // NOTE: make the function async and use await
+  async createTask(createTaskDto: CreateTaskDto, user: User): Promise<Task> {
+    return await this.tasksRepository.createTask(createTaskDto, user);
   }
 
   async updateTaskStatus(
@@ -35,18 +35,18 @@ export class TasksService {
     status: Taskstatus,
     user: User,
   ): Promise<Task> {
-    const task = await this.getTaskById(id, user);
+    let task = await this.getTaskById(id, user);
     task.status = status;
-    await this.tasksRepository.save(task); // NOTE: make task = await...
+    task = await this.tasksRepository.save(task); 
     return task;
   }
 
-  async deleteTaskById(id: string,user:User): Promise<void> {
+  async deleteTaskById(id: string, user: User): Promise<string> {
     const result = await this.tasksRepository.delete(id);
 
     if (result.affected === 0) {
       throw new NotFoundException(`Task with ID "${id}" not found`);
     }
-    // NOTE: return a message
+    return ('Deleted Succesfully')
   }
 }

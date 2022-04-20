@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { GetUser } from 'src/auth/get-user.decorator';
+import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { User } from 'src/auth/user.entity';
 import { CreateTaskDto } from './dto/create-task-dto';
 import { GetTaskFilterDto } from './dto/get-task-filter-dto';
@@ -19,37 +19,36 @@ import { Task } from './task.entity';
 import { TasksService } from './tasks.service';
 import { Logger } from '@nestjs/common';
 
-
 @Controller('tasks')
 @UseGuards(AuthGuard())
 export class TasksController {
-  private logger = new Logger('TasksController'); // NOTE: make readonly
-  // NOTE: use of logger inside service file, logger inside controller is prohibited 
+  private readonly logger = new Logger('TasksController');
+  // NOTE: use of logger inside service file, logger inside controller is prohibited
   // NOTE: all contexts should be UPPERCASE
   constructor(
-    private tasksService: TasksService, // NOTE: make readonly
-   
-  ) {
-    // NOTE: remove new line when not required
-  }
+    private readonly tasksService: TasksService, // NOTE: make readonly
+  ) {}
 
   @Get()
-  getTasks(
+  async getTasks(
     @Query() filterDto: GetTaskFilterDto,
     @GetUser() user: User,
   ): Promise<Task[]> {
-    this.logger.verbose(
+    this.logger.log(
       `User "${user.username}" retrieving all tasks.Filters: ${JSON.stringify(
         filterDto,
       )}`, // NOTE: use .log() method, verbose has another use
     );
-    return this.tasksService.getTasks(filterDto, user); // NOTE: use await
+    return await this.tasksService.getTasks(filterDto, user);
   }
 
   @Get('/:id')
-    // NOTE: use ParseUUIDPipe
-  getTaskById(@Param('id') id: string, @GetUser() user: User): Promise<Task> {
-    return this.tasksService.getTaskById(id, user);// NOTE: use await
+  // NOTE: use ParseUUIDPipe
+  async getTaskById(
+    @Param('id') id: string,
+    @GetUser() user: User,
+  ): Promise<Task> {
+    return await this.tasksService.getTaskById(id, user);
   }
 
   @Post()
@@ -79,7 +78,7 @@ export class TasksController {
   deleteTaskById(
     @Param('id') id: string,
     @GetUser() user: User,
-  ): Promise<void> {
+  ): Promise<string> {
     return this.tasksService.deleteTaskById(id, user);
   }
 }
