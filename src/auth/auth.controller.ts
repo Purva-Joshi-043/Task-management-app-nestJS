@@ -5,6 +5,8 @@ import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { User } from '../entities/user.entity';
 
 @Controller('auth')
+// NOTE: Missing ApiTAgs
+// NOTE: In all controllers functions, add @ApiOperation tag as well
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
@@ -25,6 +27,7 @@ export class AuthController {
   @ApiOkResponse({
     description: 'User signed up successfully',
   })
+  // NOTE: Missing ApiUnauthorizedResponse
   async signIn(
     @Body() authCredentialsDto: AuthCredentialsDto,
   ): Promise<{ accessToken: string }> {
