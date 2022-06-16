@@ -33,15 +33,17 @@ import { Taskstatus } from './task-status-enum';
 @Controller('tasks')
 @UseGuards(AuthGuard())
 @ApiBearerAuth()
+// NOTE: ApiTags missing
 export class TasksController {
   private readonly logger = new Logger('TasksController');
 
   constructor(
-    private readonly tasksService: TasksService, // NOTE: make readonly
+    private readonly tasksService: TasksService, 
   ) {}
 
   @Get()
-  @ApiOkResponse({ description: 'All tasks successfully fetched', type: Task })
+  @ApiOkResponse({ description: 'All tasks successfully fetched', type: Task }) // NOTE: array of Tasks as you're fetching all tasks
+  // NOTE: If all routes in a controller are protected, you can mark the whole controller protected, instead of marking every method
   @ApiUnauthorizedResponse({
     description: 'Please check your login credentials',
   })
@@ -60,7 +62,7 @@ export class TasksController {
   @Get('/:id')
   @ApiOkResponse({
     description: 'task successfully fetched with respective id',
-  })
+  }) // NOTE: add type: Task
   @ApiUnauthorizedResponse({
     description: 'Please check your login credentials',
   })
