@@ -39,6 +39,7 @@ export class ConfigService {
             );
             entities = entityContext.keys().map((id) => {
                 const entityModule = entityContext(id);
+
                 const [entity] = Object.values(entityModule);
                 return entity;
             });
